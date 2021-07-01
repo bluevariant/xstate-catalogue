@@ -2,19 +2,10 @@ import { inspect } from '@xstate/inspect';
 import { useInterpret } from '@xstate/react';
 import { GetStaticPaths, InferGetStaticPropsType, NextPage } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import { StateMachine } from 'xstate';
 import { useLayout } from '../../lib/GlobalState';
-import {
-  Action,
-  Event,
-  Guard,
-  MachineHelpersContext,
-  MDXMetadata,
-  Service,
-  State,
-} from '../../lib/MachineHelpers';
+import { MachineHelpersContext, MDXMetadata } from '../../lib/MachineHelpers';
 import { metadata, MetadataItem } from '../../lib/metadata';
 
 const useGetImports = (slug: string, deps: any[]) => {

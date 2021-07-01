@@ -47,10 +47,10 @@ export const CatalogueSearcher = (props: {
             value={input}
             placeholder="Search for machines..."
             id="search"
-            className="py-2 text-base text-gray-600 w-72 focus:outline-none"
+            className="py-2 w-72 text-base text-gray-600 focus:outline-none"
             autoComplete="off"
           ></input>
-          <div className="px-2 py-1 text-xs text-gray-400 border border-gray-300 rounded">
+          <div className="py-1 px-2 text-xs text-gray-400 rounded border border-gray-300">
             ESC
           </div>
         </div>
@@ -62,12 +62,18 @@ export const CatalogueSearcher = (props: {
             <li key={option.id}>
               <button
                 onClick={() => {
-                  router.push(`/machines/${option.id}`);
+                  let path = '/machines/';
+
+                  if (window.location.pathname.startsWith('/views')) {
+                    path = '/views/';
+                  }
+
+                  router.push(`${path}${option.id}`);
                   props.service.send('CLOSE');
                 }}
-                className="flex items-center w-full px-3 py-3 space-x-3 focus:outline-none focus:ring"
+                className="flex items-center py-3 px-3 space-x-3 w-full focus:outline-none focus:ring"
               >
-                <Icon className="flex-shrink-0 block text-gray-500 fill-current" />
+                <Icon className="block flex-shrink-0 text-gray-500 fill-current" />
                 <span className="block text-sm text-gray-600">
                   {option.title}
                 </span>
