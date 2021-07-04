@@ -1,12 +1,13 @@
-import { inspect } from '@xstate/inspect';
-import { useInterpret } from '@xstate/react';
-import { GetStaticPaths, InferGetStaticPropsType, NextPage } from 'next';
-import Head from 'next/head';
-import React, { useEffect, useRef, useState } from 'react';
-import { StateMachine } from 'xstate';
-import { useLayout } from '../../lib/GlobalState';
-import { MachineHelpersContext, MDXMetadata } from '../../lib/MachineHelpers';
-import { metadata, MetadataItem } from '../../lib/metadata';
+import { inspect } from "@xstate/inspect";
+import { useInterpret } from "@xstate/react";
+import { GetStaticPaths, InferGetStaticPropsType, NextPage } from "next";
+import Head from "next/head";
+import React, { useEffect, useRef, useState } from "react";
+import { StateMachine } from "xstate";
+import { useLayout } from "../../lib/GlobalState";
+import { MachineHelpersContext, MDXMetadata } from "../../lib/MachineHelpers";
+import { metadata, MetadataItem } from "../../lib/metadata";
+import $ from "jquery";
 
 const useGetImports = (slug: string, deps: any[]) => {
   const [imports, setImports] = useState<{
@@ -38,21 +39,15 @@ const useGetImports = (slug: string, deps: any[]) => {
 };
 
 export const getStaticProps = async ({ params }) => {
-  const fs = await import('fs');
-  const path = await import('path');
+  const fs = await import("fs");
+  const path = await import("path");
 
-  const machinesPath = path.resolve(
-    process.cwd(),
-    'lib/machines',
-    `${params.id}.machine.ts`,
-  );
+  const machinesPath = path.resolve(process.cwd(), "lib/machines", `${params.id}.machine.ts`);
 
   const meta = metadata[params.id];
 
   if (!meta) {
-    throw new Error(
-      `Could not find metadata for ${params.id}. Go to lib/metadata.ts to fix.`,
-    );
+    throw new Error(`Could not find metadata for ${params.id}. Go to lib/metadata.ts to fix.`);
   }
 
   return {
@@ -64,16 +59,22 @@ export const getStaticProps = async ({ params }) => {
   };
 };
 
-const MachinePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
-  props,
-) => {
+const MachinePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (props) => {
   const layout = useLayout();
   const imports = useGetImports(props.slug, [layout]);
-
   const iframeRef = useRef(null);
+
+  const _onLoad = () => {
+    const $iframe = $('iframe[data-id="mod"]').contents();
+
+    console.log($iframe);
+  };
+
   useEffect(() => {
     const { disconnect } = inspect({
       iframe: () => iframeRef.current,
+      // url: "http://localhost:3000/api/inspect",
+      url: "https://statecharts.io/inspect",
     });
 
     return () => {
@@ -102,31 +103,31 @@ const MachinePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           </>
         }
         iframe={
-          <iframe key="iframe" ref={iframeRef} className="w-full h-full" />
+          <iframe
+            key="iframe"
+            ref={iframeRef}
+            className="w-full h-full"
+            data-id={"mod"}
+            onLoad={_onLoad}
+          />
         }
       />
     </>
   );
 };
 
-const Layout = (props: {
-  content: React.ReactNode;
-  iframe: React.ReactNode;
-}) => {
+const Layout = (props: { content: React.ReactNode; iframe: React.ReactNode }) => {
   useEffect(() => {
-    document.body.style.overflowY = 'hidden';
+    document.body.style.overflowY = "hidden";
 
     return () => {
-      document.body.style.overflowY = 'auto';
+      document.body.style.overflowY = "auto";
     };
   }, [props.content, props.iframe]);
 
   return (
     <div>
-      <div
-        className="hidden mb-16 bg-black md:block"
-        style={{ height: 'calc(100vh - 50px)' }}
-      >
+      <div className="hidden mb-16 bg-black md:block" style={{ height: "calc(100vh - 50px)" }}>
         {props.iframe}
       </div>
       <div>{props.content}</div>
@@ -146,31 +147,27 @@ const ShowMachinePage = (props: {
     devTools: true,
   });
 
-  return (
-    <MachineHelpersContext.Provider
-      value={{ service, metadata: props.mdxMetadata }}
-    />
-  );
+  return <MachineHelpersContext.Provider value={{ service, metadata: props.mdxMetadata }} />;
 };
 
 const machinePathRegex = /\.machine\.ts$/;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const fs = await import('fs');
-  const path = await import('path');
+  const fs = await import("fs");
+  const path = await import("path");
 
-  const machinesPath = path.resolve(process.cwd(), 'lib/machines');
+  const machinesPath = path.resolve(process.cwd(), "lib/machines");
 
   const machines = fs.readdirSync(machinesPath);
 
   return {
     fallback: false,
     paths: machines
-      .filter((machine) => machine.endsWith('.ts'))
+      .filter((machine) => machine.endsWith(".ts"))
       .map((fileName) => {
         return {
           params: {
-            id: fileName.replace(machinePathRegex, ''),
+            id: fileName.replace(machinePathRegex, ""),
           },
         };
       }),

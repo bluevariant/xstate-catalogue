@@ -1,0 +1,24 @@
+{
+  "./authentication.machine.ts": [
+    {
+      "id": "./lib/machines/authentication.machine.ts",
+      "file": "static/chunks/2.js"
+    }
+  ],
+  "./authentication.mdx": [
+    {
+      "id": "./lib/machines/authentication.mdx",
+      "file": "static/chunks/1.js"
+    },
+    {
+      "id": "./node_modules/@mdx-js/react/dist/esm.js",
+      "file": "static/chunks/1.js"
+    }
+  ],
+  "./dev/noop": [
+    {
+      "id": "./node_modules/next/dist/client/dev/noop.js",
+      "file": "static/chunks/0.js"
+    }
+  ]
+}

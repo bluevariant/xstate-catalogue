@@ -1,26 +1,19 @@
-import { useSelector } from '@xstate/react';
-import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
-import * as icons from './Icons';
-import { metadata, MetadataItem } from './metadata';
-import { ModalsMachineInterpreter } from './modalsMachine';
+import { useSelector } from "@xstate/react";
+import { useRouter } from "next/router";
+import { useMemo, useState } from "react";
+import * as icons from "./Icons";
+import { metadata, MetadataItem } from "./metadata";
+import { ModalsMachineInterpreter } from "./modalsMachine";
 
-const entries: (MetadataItem & { id: string })[] = Object.entries(metadata).map(
-  ([id, value]) => ({
-    ...value,
-    id,
-  }),
-);
+const entries: (MetadataItem & { id: string })[] = Object.entries(metadata).map(([id, value]) => ({
+  ...value,
+  id,
+}));
 
-export const CatalogueSearcher = (props: {
-  service: ModalsMachineInterpreter;
-}) => {
-  const input = useSelector(
-    props.service,
-    (state) => state.context.searchModalText,
-  );
+export const CatalogueSearcher = (props: { service: ModalsMachineInterpreter }) => {
+  const input = useSelector(props.service, (state) => state.context.searchModalText);
   const optionsToShow = useMemo(() => {
-    const search = new RegExp(input, 'i');
+    const search = new RegExp(input, "i");
     return entries
       .filter((entry) => {
         return search.test(entry.title);
@@ -40,7 +33,7 @@ export const CatalogueSearcher = (props: {
             type="search"
             onChange={(e) => {
               props.service.send({
-                type: 'UPDATE_SEARCH_MODAL_TEXT',
+                type: "UPDATE_SEARCH_MODAL_TEXT",
                 text: e.target.value,
               });
             }}
@@ -49,10 +42,8 @@ export const CatalogueSearcher = (props: {
             id="search"
             className="py-2 w-72 text-base text-gray-600 focus:outline-none"
             autoComplete="off"
-          ></input>
-          <div className="py-1 px-2 text-xs text-gray-400 rounded border border-gray-300">
-            ESC
-          </div>
+          />
+          <div className="py-1 px-2 text-xs text-gray-400 rounded border border-gray-300">ESC</div>
         </div>
       </div>
       <ul className="p-6 py-4">
@@ -62,21 +53,20 @@ export const CatalogueSearcher = (props: {
             <li key={option.id}>
               <button
                 onClick={() => {
-                  let path = '/machines/';
-
-                  if (window.location.pathname.startsWith('/views')) {
-                    path = '/views/';
-                  }
-
-                  router.push(`${path}${option.id}`);
-                  props.service.send('CLOSE');
+                  // let path = '/machines/';
+                  //
+                  // if (window.location.pathname.startsWith('/views')) {
+                  //   path = '/views/';
+                  // }
+                  //
+                  // router.push(`${path}${option.id}`);
+                  router.push(`/views/${option.id}`);
+                  props.service.send("CLOSE");
                 }}
                 className="flex items-center py-3 px-3 space-x-3 w-full focus:outline-none focus:ring"
               >
                 <Icon className="block flex-shrink-0 text-gray-500 fill-current" />
-                <span className="block text-sm text-gray-600">
-                  {option.title}
-                </span>
+                <span className="block text-sm text-gray-600">{option.title}</span>
               </button>
             </li>
           );
