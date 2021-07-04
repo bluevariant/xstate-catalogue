@@ -67,12 +67,17 @@ const MachinePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (p
   const _inject = (e) => {
     const $iframe = $(e.target).contents();
     const $container = $iframe.find('[data-xviz="machine-container"]');
+
+    if ($container.length !== 1) {
+      return setTimeout(() => _inject(e), 1000);
+    }
+
     const $group = $iframe.find('[data-xviz="machine-group"]');
     const $body = $iframe.find("body");
     const control = {
       zoomMutation: 0.1,
       minZoom: 0.5,
-      maxZoom: 1.0,
+      maxZoom: 2.0,
       zoomValue: 1.0,
       translate: {
         x: 0,
