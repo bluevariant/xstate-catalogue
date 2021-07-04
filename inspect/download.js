@@ -26,9 +26,13 @@ async function main() {
 
   const files = Object.keys(temp);
   const baseUrl = "https://statecharts.io";
+  const dest = path.join(__dirname, "../public/inspect");
+
+  await fs.remove(dest);
+  await fs.ensureDir(dest);
 
   for (const file of files) {
-    const saveTo = path.join(__dirname, "../public/inspect", file);
+    const saveTo = path.join(dest, file);
 
     const { data } = await axios.get(baseUrl + file);
 
