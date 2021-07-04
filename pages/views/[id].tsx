@@ -72,7 +72,7 @@ const MachinePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (p
     const control = {
       zoomMutation: 0.1,
       minZoom: 0.5,
-      maxZoom: 2.0,
+      maxZoom: 1.0,
       zoomValue: 1.0,
       translate: {
         x: 0,
