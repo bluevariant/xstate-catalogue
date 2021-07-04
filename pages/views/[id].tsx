@@ -71,8 +71,6 @@ const MachinePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (p
   };
 
   useEffect(() => {
-    console.log(window.location);
-
     const { disconnect } = inspect({
       iframe: () => iframeRef.current,
       url: window.location.origin + "/api/inspect",
