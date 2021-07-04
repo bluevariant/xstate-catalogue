@@ -105,8 +105,10 @@ const MachinePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (p
       _update();
     });
 
+    $container.on("contextmenu", () => false);
+
     $container.on("mousedown", function (e) {
-      if (e.which === 1) {
+      if ([2, 3].includes(e.which)) {
         $(this).css("cursor", "move");
 
         control.translate.temp.ready = true;
