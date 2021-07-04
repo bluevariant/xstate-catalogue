@@ -68,9 +68,12 @@ const MachinePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (p
     const $iframe = $(e.target).contents();
     const $container = $iframe.find('[data-xviz="machine-container"]');
 
-    if ($container.length !== 1) {
+    if ($container.length === 0) {
       return setTimeout(() => _inject(e), 1000);
     }
+
+    $iframe.find('[data-xviz="inspector-header"]').css("display", "none");
+    // $iframe.find("[data-xviz=event-label]").css("border-radius", "3px");
 
     const $group = $iframe.find('[data-xviz="machine-group"]');
     const $body = $iframe.find("body");
@@ -191,7 +194,7 @@ const Layout = (props: { content: React.ReactNode; iframe: React.ReactNode }) =>
 
   return (
     <div>
-      <div className="hidden mb-16 bg-black md:block" style={{ height: "calc(100vh - 50px)" }}>
+      <div className="hidden mb-16 bg-black md:block" style={{ height: "calc(100vh - 22px)" }}>
         {props.iframe}
       </div>
       <div>{props.content}</div>
