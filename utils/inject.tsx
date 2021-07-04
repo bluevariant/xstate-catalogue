@@ -100,4 +100,6 @@ export const _inject = (e) => {
 
     control.translate.temp.ready = false;
   });
+
+  $(e.target).attr("style", "");
 };

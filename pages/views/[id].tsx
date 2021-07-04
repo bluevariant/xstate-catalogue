@@ -95,7 +95,15 @@ const MachinePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (p
             )}
           </>
         }
-        iframe={<iframe key="iframe" ref={iframeRef} className="w-full h-full" onLoad={_inject} />}
+        iframe={
+          <iframe
+            key="iframe"
+            ref={iframeRef}
+            className="w-full h-full"
+            onLoad={_inject}
+            style={{ opacity: 0 }}
+          />
+        }
       />
     </>
   );
