@@ -4,7 +4,7 @@ const path = require("path");
 const axios = require("axios");
 
 async function main() {
-  const html = fs.readFileSync(path.join(__dirname, "index.html"), "utf-8");
+  const { data: html } = await axios.get("https://statecharts.io/inspect");
   const $ = cheerio.load(html);
   const temp = {};
 
@@ -38,7 +38,12 @@ async function main() {
     console.log(saveTo);
   }
 
-  await fs.writeFile(path.join(__dirname, "index2.html"), $.html());
+  await fs.writeFile(
+    path.join(__dirname, "../pages/api", "response.json"),
+    JSON.stringify({
+      html: $.html(),
+    }),
+  );
 }
 
 main().catch(console.error);
