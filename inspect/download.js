@@ -13,9 +13,7 @@ async function main() {
 
     temp[link] = true;
 
-    if (link.startsWith("/")) {
-      $(e).attr("href", link.replace("/", ""));
-    }
+    $(e).attr("href", path.join("/inspect/", link).replace(/\\/g, "/"));
   });
 
   $("[src]").each((i, e) => {
@@ -23,16 +21,14 @@ async function main() {
 
     temp[link] = true;
 
-    if (link.startsWith("/")) {
-      $(e).attr("src", link.replace("/", ""));
-    }
+    $(e).attr("src", path.join("/inspect/", link).replace(/\\/g, "/"));
   });
 
   const files = Object.keys(temp);
   const baseUrl = "https://statecharts.io";
 
   for (const file of files) {
-    const saveTo = path.join(__dirname, '../public', file);
+    const saveTo = path.join(__dirname, "../public/inspect", file);
 
     const { data } = await axios.get(baseUrl + file);
 
@@ -42,7 +38,7 @@ async function main() {
     console.log(saveTo);
   }
 
-  console.log($.html());
+  await fs.writeFile(path.join(__dirname, "index2.html"), $.html());
 }
 
 main().catch(console.error);

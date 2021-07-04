@@ -71,10 +71,11 @@ const MachinePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (p
   };
 
   useEffect(() => {
+    console.log(window.location);
+
     const { disconnect } = inspect({
       iframe: () => iframeRef.current,
-      // url: "http://localhost:3000/api/inspect",
-      url: "https://statecharts.io/inspect",
+      url: window.location.origin + "/api/inspect",
     });
 
     return () => {
