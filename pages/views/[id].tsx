@@ -7,7 +7,6 @@ import { StateMachine } from "xstate";
 import { useLayout } from "../../lib/GlobalState";
 import { MachineHelpersContext, MDXMetadata } from "../../lib/MachineHelpers";
 import { metadata, MetadataItem } from "../../lib/metadata";
-import { _inject } from "../../utils/inject";
 
 const useGetImports = (slug: string, deps: any[]) => {
   const [imports, setImports] = useState<{
@@ -96,13 +95,7 @@ const MachinePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (p
           </>
         }
         iframe={
-          <iframe
-            key="iframe"
-            ref={iframeRef}
-            className="w-full h-full"
-            onLoad={_inject}
-            style={{ opacity: 0 }}
-          />
+          <iframe key="iframe" ref={iframeRef} className="w-full h-full" style={{ opacity: 0 }} />
         }
       />
     </>
