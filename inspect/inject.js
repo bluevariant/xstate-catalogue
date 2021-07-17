@@ -14,7 +14,7 @@ function inject() {
     m: [1, 0, 0, 1, 0, 0],
     scaleAmount: 1.1,
     minScale: 0.5,
-    maxScale: 2.0,
+    maxScale: 3.0,
     scale: 1.0,
     translate: {
       x: 0,
@@ -63,6 +63,8 @@ function inject() {
         this.update();
       }
 
+      amount = Math.min(Math.max(this.minScale, this.maxScale), this.maxScale);
+
       this.scale *= amount;
       this.translate.x = at.x - (at.x - this.translate.x) * amount;
       this.translate.y = at.y - (at.y - this.translate.y) * amount;
@@ -90,8 +92,6 @@ function inject() {
 
   _autoLayout();
   $group.on("wheel", function (e) {
-    e.stopPropagation();
-
     const rect = $(this)[0].getBoundingClientRect();
     const x = e.pageX - rect.width / 2;
     const y = e.pageY - rect.height / 2;
@@ -104,20 +104,7 @@ function inject() {
       control.applyTo();
     }
 
-    // const lastZoomValue = control.scale;
-    // let amount;
-    //
-    // if (e.originalEvent["wheelDelta"] / 120 > 0) {
-    //   amount = control.scaleAmount;
-    // } else {
-    //   amount = 1 / control.scaleAmount;
-    // }
-    //
-    // control.scale *= amount;
-    // // control.zoomValue = Math.min(Math.max(control.minZoom, control.zoomValue), control.maxZoom);
-    // // amount = control.zoomValue / lastZoomValue;
-    //
-    // control.applyTo();
+    e.preventDefault();
   });
   $body.on("wheel", function (e) {
     e.stopPropagation();
