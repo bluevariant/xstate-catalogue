@@ -19,7 +19,7 @@ function inject() {
   });
 
   const $body = $("body");
-  const $svg = $('[data-xviz="machine-container"] svg');
+  const $svg = $(".svg-pan-zoom_viewport");
   // https://stackoverflow.com/a/60235061/6435579
   const panControl = {
     m: [1, 0, 0, 1, 0, 0],
@@ -39,10 +39,17 @@ function inject() {
       },
     },
     dirty: true,
+    getTransforms() {
+      return $svg
+        .css("transform")
+        .split("matrix(")[1]
+        .split(")")[0]
+        .split(",")
+        .map((v) => parseFloat(v));
+    },
     update() {
       this.dirty = false;
-      this.m[3] = this.m[0] = 1;
-      this.m[2] = this.m[1] = 0;
+      this.m = this.getTransforms();
       this.m[4] = this.translate.x;
       this.m[5] = this.translate.y;
     },
@@ -51,18 +58,26 @@ function inject() {
         this.update();
       }
 
+      const transforms = this.getTransforms();
+
       $svg.css(
         "transform",
-        `matrix(${this.m[0]},${this.m[1]},${this.m[2]},${this.m[3]},${this.m[4]},${this.m[5]})`,
+        `matrix(${transforms[0]},${transforms[1]},${transforms[2]},${transforms[3]},${this.m[4]},${this.m[5]})`,
       );
+      zoomControl.pan({
+        x: this.m[4],
+        y: this.m[5],
+      });
     },
     pan(amount) {
       if (this.dirty) {
         this.update();
       }
 
-      this.translate.x += amount.x;
-      this.translate.y += amount.y;
+      const transforms = this.getTransforms();
+
+      this.translate.x = transforms[4] + amount.x;
+      this.translate.y = transforms[5] + amount.y;
       this.dirty = true;
     },
   };
@@ -84,11 +99,11 @@ function inject() {
     //
     //   control.applyTo();
     // }
-    panControl.translate.y = 120;
 
-    panControl.applyTo();
     zoomControl.fit();
     zoomControl.center();
+    panControl.pan({ x: 0, y: 120 });
+    panControl.applyTo();
   };
 
   _autoLayout();
