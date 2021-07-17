@@ -28,6 +28,7 @@ function inject() {
       distance: 6,
       temp: {
         ready: false,
+        moved: 0,
         x: 0,
         y: 0,
       },
@@ -88,11 +89,7 @@ function inject() {
     e.stopPropagation();
   });
   $container.on("click", function (e) {
-    const a = control.translate.start.x - e.pageX;
-    const b = control.translate.start.y - e.pageY;
-    const c = Math.sqrt(a * a + b * b);
-
-    if (c > control.translate.distance) {
+    if (control.translate.temp.moved > control.translate.distance) {
       e.preventDefault();
       e.stopPropagation();
     }
@@ -100,16 +97,15 @@ function inject() {
   $container.on("mousedown", function (e) {
     if (e.which === 1) {
       control.translate.temp.ready = true;
+      control.translate.temp.moved = 0;
       control.translate.temp.x = e.pageX;
       control.translate.temp.y = e.pageY;
-      control.translate.start.x = e.pageX;
-      control.translate.start.y = e.pageY;
     }
   });
   $container.on("mousemove", function (e) {
     if (control.translate.temp.ready) {
-      const a = control.translate.start.x - e.pageX;
-      const b = control.translate.start.y - e.pageY;
+      const a = e.pageX - control.translate.temp.x;
+      const b = e.pageY - control.translate.temp.y;
       const c = Math.sqrt(a * a + b * b);
 
       control.pan({
@@ -117,12 +113,13 @@ function inject() {
         y: e.pageY - control.translate.temp.y,
       });
 
-      if (c > control.translate.distance) {
+      if (control.translate.temp.moved > control.translate.distance) {
         control.applyTo();
       }
 
       control.translate.temp.x = e.pageX;
       control.translate.temp.y = e.pageY;
+      control.translate.temp.moved += c;
     }
   });
   $container.on("mouseup", function (e) {
