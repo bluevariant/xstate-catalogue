@@ -7,6 +7,8 @@ function inject() {
     return setTimeout(inject, 33);
   }
 
+  $container.css("opacity", 0);
+
   const zoomControl = svgPanZoom('[data-xviz="machine-container"] svg', {
     viewportSelector: '[data-xviz="machine-container"]',
     dblClickZoomEnabled: false,
@@ -100,10 +102,21 @@ function inject() {
     //   control.applyTo();
     // }
 
-    zoomControl.fit();
+    zoomControl.contain();
+
+    if (zoomControl.getZoom() > 1) {
+      zoomControl.zoom(1);
+    }
+
     zoomControl.center();
-    panControl.pan({ x: 0, y: 120 });
+
+    const transforms = panControl.getTransforms();
+
+    panControl.translate.x = transforms[4];
+    panControl.translate.y = 120;
     panControl.applyTo();
+
+    $('[data-xviz="machine-container"]').css("opacity", 1);
   };
 
   _autoLayout();

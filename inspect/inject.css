@@ -1,3 +1,7 @@
 [data-xviz="inspector-header"] {
   display: none;
 }
+
+[data-xviz="machine-container"] {
+  opacity: 0;
+}
