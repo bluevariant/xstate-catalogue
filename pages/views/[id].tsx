@@ -110,12 +110,10 @@ const Layout = (props: { content: React.ReactNode; iframe: React.ReactNode }) =>
   }, [props.content, props.iframe]);
 
   return (
-    <div>
-      <div className="hidden mb-16 bg-black md:block" style={{ height: "calc(100vh - 22px)" }}>
-        {props.iframe}
-      </div>
+    <>
+      <div className="hidden bg-black md:block w-screen h-screen">{props.iframe}</div>
       <div>{props.content}</div>
-    </div>
+    </>
   );
 };
 
@@ -139,9 +137,7 @@ const machinePathRegex = /\.machine\.ts$/;
 export const getStaticPaths: GetStaticPaths = async () => {
   const fs = await import("fs");
   const path = await import("path");
-
   const machinesPath = path.resolve(process.cwd(), "lib/machines");
-
   const machines = fs.readdirSync(machinesPath);
 
   return {
