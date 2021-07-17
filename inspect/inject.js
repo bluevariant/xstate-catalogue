@@ -96,7 +96,7 @@ function inject() {
 
   _autoLayout();
   $group.on("wheel", function (e) {
-    const rect = $(this)[0].getBoundingClientRect();
+    const rect = $group[0].getBoundingClientRect();
     const x = e.pageX - rect.width / 2;
     const y = e.pageY - rect.height / 2;
 
