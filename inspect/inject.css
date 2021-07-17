@@ -6,3 +6,24 @@
   opacity: 0;
   transition: opacity 0.3s;
 }
+
+.w-6 {
+  width: 1.5rem;
+}
+
+.h-6 {
+  height: 1.5rem;
+}
+
+.panZoomControlTools {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  padding: 0.375rem;
+  cursor: pointer;
+}
+
+.panZoomControlTools:hover {
+  background: #398ef1;
+  border-radius: 0.25rem;
+}

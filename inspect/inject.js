@@ -60,16 +60,17 @@ function inject() {
         this.update();
       }
 
+      zoomControl.pan({
+        x: this.m[4],
+        y: this.m[5],
+      });
+
       const transforms = this.getTransforms();
 
       $svg.css(
         "transform",
         `matrix(${transforms[0]},${transforms[1]},${transforms[2]},${transforms[3]},${this.m[4]},${this.m[5]})`,
       );
-      zoomControl.pan({
-        x: this.m[4],
-        y: this.m[5],
-      });
     },
     pan(amount) {
       if (this.dirty) {
@@ -101,7 +102,9 @@ function inject() {
     //
     //   control.applyTo();
     // }
+    $(".svg-pan-zoom_viewport").css("opacity", 0);
 
+    zoomControl.reset();
     zoomControl.contain();
 
     if (zoomControl.getZoom() > 1) {
@@ -110,13 +113,16 @@ function inject() {
 
     zoomControl.center();
 
-    const transforms = panControl.getTransforms();
+    setTimeout(() => {
+      const transforms = panControl.getTransforms();
 
-    panControl.translate.x = transforms[4];
-    panControl.translate.y = 120;
-    panControl.applyTo();
-
-    $('[data-xviz="machine-container"]').css("opacity", 1);
+      panControl.translate.x = transforms[4];
+      panControl.translate.y = 120;
+      panControl.update();
+      panControl.applyTo();
+      $('[data-xviz="machine-container"]').css("opacity", 1);
+      $(".svg-pan-zoom_viewport").css("opacity", 1);
+    }, 100);
   };
 
   _autoLayout();
@@ -162,5 +168,17 @@ function inject() {
   });
   $container.on("mouseleave", function (e) {
     panControl.translate.temp.ready = false;
+  });
+
+  ///
+  $(".panZoomControlTools").remove();
+  $container.append(`<div class="panZoomControlTools" title="Reset view">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+    </svg>
+  </div>`);
+  $(".panZoomControlTools").off("click");
+  $(".panZoomControlTools").on("click", () => {
+    _autoLayout();
   });
 }
