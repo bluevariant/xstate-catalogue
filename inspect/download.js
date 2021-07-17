@@ -6,18 +6,16 @@ const babel = require("@babel/core");
 const htmlMinifier = require("html-minifier").minify;
 
 function getInjectJs() {
-  const jqueryScript = fs.readFileSync(
-    path.join(__dirname, "./jquery-3.6.0.min.js"),
-    "utf-8"
-  );
+  const jqueryScript = fs.readFileSync(path.join(__dirname, "./jquery-3.6.0.min.js"), "utf-8");
+  const svgPanZoomScript = fs.readFileSync(path.join(__dirname, "./svg-pan-zoom.min.js"), "utf-8");
   const injectScript = babel.transform(
     fs.readFileSync(path.join(__dirname, "./inject.js"), "utf-8"),
     {
       presets: ["@babel/preset-env"],
-    }
+    },
   ).code;
 
-  return [jqueryScript, injectScript].join("");
+  return [jqueryScript, svgPanZoomScript, injectScript].join("");
 }
 
 function getInjectCss() {
@@ -85,7 +83,7 @@ async function main() {
     path.join(__dirname, "../env/", "statecharts.json"),
     JSON.stringify({
       html: minify($.html()),
-    })
+    }),
   );
 }
 

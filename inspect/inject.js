@@ -7,15 +7,19 @@ function inject() {
     return setTimeout(inject, 33);
   }
 
+  svgPanZoom('[data-xviz="machine-container"] svg', {
+    dblClickZoomEnabled: false,
+    zoomScaleSensitivity: 0.3,
+    minZoom: 0,
+    maxZoom: 999,
+    controlIconsEnabled: true,
+    panEnabled: false,
+  });
+
   const $svg = $('[data-xviz="machine-group"]').parent();
-  const $body = $("body");
   // https://stackoverflow.com/a/60235061/6435579
   const control = {
     m: [1, 0, 0, 1, 0, 0],
-    scaleAmount: 1.1,
-    minScale: 0.5,
-    maxScale: 3.0,
-    scale: 1.0,
     translate: {
       x: 0,
       y: 0,
@@ -33,7 +37,7 @@ function inject() {
     dirty: true,
     update() {
       this.dirty = false;
-      this.m[3] = this.m[0] = this.scale;
+      this.m[3] = this.m[0] = 1;
       this.m[2] = this.m[1] = 0;
       this.m[4] = this.translate.x;
       this.m[5] = this.translate.y;
@@ -57,23 +61,6 @@ function inject() {
       this.translate.y += amount.y;
       this.dirty = true;
     },
-    scaleAt(at, amount) {
-      // at in screen coords
-      if (this.dirty) {
-        this.update();
-      }
-
-      const oldScale = this.scale;
-
-      this.scale *= amount;
-      this.scale = Math.min(Math.max(this.minScale, this.scale), this.maxScale);
-
-      amount = this.scale / oldScale;
-
-      this.translate.x = at.x - (at.x - this.translate.x) * amount;
-      this.translate.y = at.y - (at.y - this.translate.y) * amount;
-      this.dirty = true;
-    },
   };
   const _autoLayout = () => {
     const $machine = $('[data-xviz="machine"]');
@@ -95,24 +82,6 @@ function inject() {
   };
 
   _autoLayout();
-  $svg.on("wheel", function (e) {
-    const rect = $svg[0].getBoundingClientRect();
-    const x = e.pageX - rect.width / 2;
-    const y = e.pageY - rect.height / 2;
-
-    if (e.originalEvent["wheelDelta"] / 120 > 0) {
-      control.scaleAt({ x, y }, control.scaleAmount);
-      control.applyTo();
-    } else {
-      control.scaleAt({ x, y }, 1 / control.scaleAmount);
-      control.applyTo();
-    }
-
-    e.preventDefault();
-  });
-  $body.on("wheel", function (e) {
-    e.stopPropagation();
-  });
   $container.on("click", function (e) {
     const a = control.translate.start.x - e.pageX;
     const b = control.translate.start.y - e.pageY;
