@@ -66,6 +66,8 @@ function inject() {
 
     control.zoomValue = Math.min(Math.max(control.minZoom, control.zoomValue), control.maxZoom);
 
+    console.log(control.zoomValue);
+
     _update();
   });
   $container.on("click", function (e) {
@@ -105,6 +107,9 @@ function inject() {
     }
   });
   $container.on("mouseup", function (e) {
+    control.translate.temp.ready = false;
+  });
+  $container.on("mouseleave", function (e) {
     control.translate.temp.ready = false;
   });
 }
