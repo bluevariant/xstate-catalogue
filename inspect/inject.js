@@ -7,7 +7,7 @@ function inject() {
     return setTimeout(inject, 33);
   }
 
-  svgPanZoom('[data-xviz="machine-container"] svg', {
+  const zoomControl = svgPanZoom('[data-xviz="machine-container"] svg', {
     viewportSelector: '[data-xviz="machine-container"]',
     dblClickZoomEnabled: false,
     zoomScaleSensitivity: 0.3,
@@ -20,7 +20,7 @@ function inject() {
   const $body = $("body");
   const $svg = $('[data-xviz="machine-container"] svg');
   // https://stackoverflow.com/a/60235061/6435579
-  const control = {
+  const panControl = {
     m: [1, 0, 0, 1, 0, 0],
     translate: {
       x: 0,
@@ -66,22 +66,27 @@ function inject() {
     },
   };
   const _autoLayout = () => {
-    const $machine = $('[data-xviz="machine"]');
+    // const $machine = $('[data-xviz="machine"]');
+    //
+    // if ($machine.length > 0) {
+    //   if ($machine.height() < $container.height()) {
+    //     control.translate.y = Math.max(
+    //       0,
+    //       parseInt(($container.height() - $machine.height()) / 4 + ""),
+    //     );
+    //   }
+    //
+    //   if ($machine.width() < $container.width()) {
+    //     // control.translate.x = parseInt(($container.width() - $machine.width()) / 2 + "");
+    //     control.translate.x = 0;
+    //   }
+    //
+    //   control.applyTo();
+    // }
+    panControl.translate.y = 120;
 
-    if ($machine.length > 0) {
-      if ($machine.height() < $container.height()) {
-        control.translate.y = Math.max(
-          0,
-          parseInt(($container.height() - $machine.height()) / 4 + ""),
-        );
-      }
-
-      if ($machine.width() < $container.width()) {
-        control.translate.x = parseInt(($container.width() - $machine.width()) / 2 + "");
-      }
-
-      control.applyTo();
-    }
+    panControl.applyTo();
+    zoomControl.fit();
   };
 
   _autoLayout();
@@ -89,43 +94,43 @@ function inject() {
     e.stopPropagation();
   });
   $container.on("click", function (e) {
-    if (control.translate.temp.moved > control.translate.distance) {
+    if (panControl.translate.temp.moved > panControl.translate.distance) {
       e.preventDefault();
       e.stopPropagation();
     }
   });
   $container.on("mousedown", function (e) {
     if (e.which === 1) {
-      control.translate.temp.ready = true;
-      control.translate.temp.moved = 0;
-      control.translate.temp.x = e.pageX;
-      control.translate.temp.y = e.pageY;
+      panControl.translate.temp.ready = true;
+      panControl.translate.temp.moved = 0;
+      panControl.translate.temp.x = e.pageX;
+      panControl.translate.temp.y = e.pageY;
     }
   });
   $container.on("mousemove", function (e) {
-    if (control.translate.temp.ready) {
-      const a = e.pageX - control.translate.temp.x;
-      const b = e.pageY - control.translate.temp.y;
+    if (panControl.translate.temp.ready) {
+      const a = e.pageX - panControl.translate.temp.x;
+      const b = e.pageY - panControl.translate.temp.y;
       const c = Math.sqrt(a * a + b * b);
 
-      control.pan({
-        x: e.pageX - control.translate.temp.x,
-        y: e.pageY - control.translate.temp.y,
+      panControl.pan({
+        x: e.pageX - panControl.translate.temp.x,
+        y: e.pageY - panControl.translate.temp.y,
       });
 
-      if (control.translate.temp.moved > control.translate.distance) {
-        control.applyTo();
+      if (panControl.translate.temp.moved > panControl.translate.distance) {
+        panControl.applyTo();
       }
 
-      control.translate.temp.x = e.pageX;
-      control.translate.temp.y = e.pageY;
-      control.translate.temp.moved += c;
+      panControl.translate.temp.x = e.pageX;
+      panControl.translate.temp.y = e.pageY;
+      panControl.translate.temp.moved += c;
     }
   });
   $container.on("mouseup", function (e) {
-    control.translate.temp.ready = false;
+    panControl.translate.temp.ready = false;
   });
   $container.on("mouseleave", function (e) {
-    control.translate.temp.ready = false;
+    panControl.translate.temp.ready = false;
   });
 }
