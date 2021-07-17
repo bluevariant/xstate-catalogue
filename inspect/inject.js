@@ -63,9 +63,13 @@ function inject() {
         this.update();
       }
 
-      amount = Math.min(Math.max(this.minScale, this.maxScale), this.maxScale);
+      const oldScale = this.scale;
 
       this.scale *= amount;
+      this.scale = Math.min(Math.max(this.minScale, this.scale), this.maxScale);
+
+      amount = this.scale / oldScale;
+
       this.translate.x = at.x - (at.x - this.translate.x) * amount;
       this.translate.y = at.y - (at.y - this.translate.y) * amount;
       this.dirty = true;
