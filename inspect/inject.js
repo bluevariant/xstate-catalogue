@@ -7,8 +7,6 @@ function inject() {
     return setTimeout(inject, 33);
   }
 
-  console.log("injected");
-
   const $group = $('[data-xviz="machine-group"]');
   const $body = $("body");
   const control = {
@@ -19,8 +17,13 @@ function inject() {
     translate: {
       x: 0,
       y: 0,
+      distance: 6,
       temp: {
         ready: false,
+        x: 0,
+        y: 0,
+      },
+      start: {
         x: 0,
         y: 0,
       },
@@ -29,7 +32,7 @@ function inject() {
   const _update = () => {
     $group.attr(
       "style",
-      `transform: translate(${control.translate.x}px, ${control.translate.y}px) scale(${control.zoomValue})`
+      `transform: translate(${control.translate.x}px, ${control.translate.y}px) scale(${control.zoomValue})`,
     );
   };
   const _autoLayout = () => {
@@ -39,14 +42,12 @@ function inject() {
       if ($machine.height() < $container.height()) {
         control.translate.y = Math.max(
           0,
-          parseInt(($container.height() - $machine.height()) / 4 + "")
+          parseInt(($container.height() - $machine.height()) / 4 + ""),
         );
       }
 
       if ($machine.width() < $container.width()) {
-        control.translate.x = parseInt(
-          ($container.width() - $machine.width()) / 2 + ""
-        );
+        control.translate.x = parseInt(($container.width() - $machine.width()) / 2 + "");
       }
 
       _update();
@@ -54,7 +55,6 @@ function inject() {
   };
 
   _autoLayout();
-
   $body.on("wheel", function (e) {
     e.stopPropagation();
 
@@ -64,45 +64,47 @@ function inject() {
       control.zoomValue -= control.zoomMutation;
     }
 
-    control.zoomValue = Math.min(
-      Math.max(control.minZoom, control.zoomValue),
-      control.maxZoom
-    );
+    control.zoomValue = Math.min(Math.max(control.minZoom, control.zoomValue), control.maxZoom);
 
     _update();
   });
+  $container.on("click", function (e) {
+    const a = control.translate.start.x - e.pageX;
+    const b = control.translate.start.y - e.pageY;
+    const c = Math.sqrt(a * a + b * b);
 
-  $container.on("contextmenu", () => false);
-
+    if (c > control.translate.distance) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  });
   $container.on("mousedown", function (e) {
-    if ([2, 3].includes(e.which)) {
-      $(this).css("cursor", "move");
-
+    if (e.which === 1) {
       control.translate.temp.ready = true;
       control.translate.temp.x = e.pageX;
       control.translate.temp.y = e.pageY;
-
-      e.preventDefault();
+      control.translate.start.x = e.pageX;
+      control.translate.start.y = e.pageY;
     }
   });
-
   $container.on("mousemove", function (e) {
     if (control.translate.temp.ready) {
+      const a = control.translate.start.x - e.pageX;
+      const b = control.translate.start.y - e.pageY;
+      const c = Math.sqrt(a * a + b * b);
+
       control.translate.x += e.pageX - control.translate.temp.x;
       control.translate.y += e.pageY - control.translate.temp.y;
 
-      _update();
+      if (c > control.translate.distance) {
+        _update();
+      }
 
       control.translate.temp.x = e.pageX;
       control.translate.temp.y = e.pageY;
     }
   });
-
-  $container.on("mouseup", function () {
-    $(this).css("cursor", "default");
-
+  $container.on("mouseup", function (e) {
     control.translate.temp.ready = false;
   });
-
-  // $(e.target).attr("style", "");
 }
