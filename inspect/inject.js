@@ -15,6 +15,7 @@ function inject() {
     maxZoom: 999,
     controlIconsEnabled: false,
     panEnabled: false,
+    contain: false,
   });
 
   const $body = $("body");
@@ -87,6 +88,7 @@ function inject() {
 
     panControl.applyTo();
     zoomControl.fit();
+    zoomControl.center();
   };
 
   _autoLayout();
