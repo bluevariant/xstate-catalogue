@@ -1,12 +1,14 @@
-import { ServerStyleSheets } from '@material-ui/core/styles';
-import Document, { Html, Main, Head, NextScript } from 'next/document';
-import React from 'react';
+import { ServerStyleSheets } from "@material-ui/core/styles";
+import Document, { Html, Main, Head, NextScript } from "next/document";
+import React from "react";
 
 export default class MyDocument extends Document {
   render() {
     return (
       <Html lang="en">
-        <Head></Head>
+        <Head>
+          <title>Visual Yaml</title>
+        </Head>
         <body>
           <Main />
           <NextScript />
@@ -31,9 +33,6 @@ MyDocument.getInitialProps = async (ctx) => {
   return {
     ...initialProps,
     // Styles fragment is rendered after the app and page rendering finish.
-    styles: [
-      ...React.Children.toArray(initialProps.styles),
-      sheets.getStyleElement(),
-    ],
+    styles: [...React.Children.toArray(initialProps.styles), sheets.getStyleElement()],
   };
 };
