@@ -7,7 +7,7 @@ function inject() {
     return setTimeout(inject, 33);
   }
 
-  const $group = $('[data-xviz="machine-group"]');
+  const $svg = $('[data-xviz="machine-group"]').parent();
   const $body = $("body");
   // https://stackoverflow.com/a/60235061/6435579
   const control = {
@@ -43,7 +43,7 @@ function inject() {
         this.update();
       }
 
-      $group.css(
+      $svg.css(
         "transform",
         `matrix(${this.m[0]},${this.m[1]},${this.m[2]},${this.m[3]},${this.m[4]},${this.m[5]})`,
       );
@@ -95,8 +95,8 @@ function inject() {
   };
 
   _autoLayout();
-  $group.on("wheel", function (e) {
-    const rect = $group[0].getBoundingClientRect();
+  $svg.on("wheel", function (e) {
+    const rect = $svg[0].getBoundingClientRect();
     const x = e.pageX - rect.width / 2;
     const y = e.pageY - rect.height / 2;
 
