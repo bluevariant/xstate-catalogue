@@ -8,15 +8,17 @@ function inject() {
   }
 
   svgPanZoom('[data-xviz="machine-container"] svg', {
+    viewportSelector: '[data-xviz="machine-container"]',
     dblClickZoomEnabled: false,
     zoomScaleSensitivity: 0.3,
     minZoom: 0,
     maxZoom: 999,
-    controlIconsEnabled: true,
+    controlIconsEnabled: false,
     panEnabled: false,
   });
 
-  const $svg = $('[data-xviz="machine-group"]').parent();
+  const $body = $("body");
+  const $svg = $('[data-xviz="machine-container"] svg');
   // https://stackoverflow.com/a/60235061/6435579
   const control = {
     m: [1, 0, 0, 1, 0, 0],
@@ -82,6 +84,9 @@ function inject() {
   };
 
   _autoLayout();
+  $body.on("wheel", function (e) {
+    e.stopPropagation();
+  });
   $container.on("click", function (e) {
     const a = control.translate.start.x - e.pageX;
     const b = control.translate.start.y - e.pageY;
