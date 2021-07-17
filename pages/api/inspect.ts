@@ -1,3 +1,3 @@
 export default function handler(req, res) {
-  res.send(require("./response.json").html);
+  res.send(require("../../env/statecharts.json").html);
 }
