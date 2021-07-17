@@ -10,10 +10,10 @@ function inject() {
   const $group = $('[data-xviz="machine-group"]');
   const $body = $("body");
   const control = {
-    zoomMutation: 0.1,
-    minZoom: 0.5,
-    maxZoom: 2.0,
-    zoomValue: 1.0,
+    scaleAmount: 1.1,
+    minScale: 0.5,
+    maxScale: 2.0,
+    scale: 1.0,
     translate: {
       x: 0,
       y: 0,
@@ -28,12 +28,12 @@ function inject() {
         y: 0,
       },
     },
-  };
-  const _update = () => {
-    $group.attr(
-      "style",
-      `transform: translate(${control.translate.x}px, ${control.translate.y}px) scale(${control.zoomValue})`,
-    );
+    dirty: true,
+    applyTo() {
+      const m = [this.scale, 0, 0, this.scale, this.translate.x, this.translate.y];
+
+      $group.css("transform", `matrix(${m[0]},${m[1]},${m[2]},${m[3]},${m[4]},${m[5]})`);
+    },
   };
   const _autoLayout = () => {
     const $machine = $('[data-xviz="machine"]');
@@ -50,25 +50,38 @@ function inject() {
         control.translate.x = parseInt(($container.width() - $machine.width()) / 2 + "");
       }
 
-      _update();
+      control.applyTo();
     }
   };
 
   _autoLayout();
-  $body.on("wheel", function (e) {
+  $group.on("wheel", function (e) {
     e.stopPropagation();
 
+    const rect = $(this)[0].getBoundingClientRect();
+    const lastZoomValue = control.scale;
+    let amount;
+
     if (e.originalEvent["wheelDelta"] / 120 > 0) {
-      control.zoomValue += control.zoomMutation;
+      amount = control.scaleAmount;
     } else {
-      control.zoomValue -= control.zoomMutation;
+      amount = 1 / control.scaleAmount;
     }
 
-    control.zoomValue = Math.min(Math.max(control.minZoom, control.zoomValue), control.maxZoom);
+    control.scale *= amount;
+    // control.zoomValue = Math.min(Math.max(control.minZoom, control.zoomValue), control.maxZoom);
+    // amount = control.zoomValue / lastZoomValue;
 
-    console.log(control.zoomValue);
+    const x = e.pageX - rect.width / 2;
+    const y = e.pageY - rect.height / 2;
 
-    _update();
+    control.translate.x = x - (x - control.translate.x) * amount;
+    control.translate.y = y - (y - control.translate.y) * amount;
+
+    control.applyTo();
+  });
+  $body.on("wheel", function (e) {
+    e.stopPropagation();
   });
   $container.on("click", function (e) {
     const a = control.translate.start.x - e.pageX;
@@ -99,7 +112,7 @@ function inject() {
       control.translate.y += e.pageY - control.translate.temp.y;
 
       if (c > control.translate.distance) {
-        _update();
+        control.applyTo();
       }
 
       control.translate.temp.x = e.pageX;
